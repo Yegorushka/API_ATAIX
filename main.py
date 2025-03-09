@@ -1,6 +1,4 @@
-import json
-import requests
-import re
+import json, re, requests
 
 config = {
     "api_key": "Sl3lC9hegHaZDjXbhdPxvbuPoBJj9F5ltQOyyFOFgSuSa5v4NtXIhuw84W1JiHP4BahjPNiYowwJU3kFkzGGAd"
@@ -15,7 +13,6 @@ def get_request(endpoint):
         "API-KEY": API_KEY,
         "Content-Type": "application/json"
     }
-    
     try:
         response = requests.get(url, headers=headers, timeout=20)
         if response.status_code == 200:
@@ -23,10 +20,9 @@ def get_request(endpoint):
         else:
             return f"Ошибка: {response.status_code}, {response.text}"
     except requests.exceptions.Timeout:
-        return "Ошибка: Превышено время ожидания ответа от сервера"
+        return "Превышено время ожидания ответа от сервера"
     except requests.exceptions.RequestException as e:
         return f"Ошибка запроса: {e}"
-
 
 def find_currencies(text, word):
     words = re.findall(r'\b\w+\b', text)
