@@ -1,28 +1,18 @@
 import json, re, requests
 
-config = {
-    "api_key": "API_KEY"
-}
-
-API_KEY = config["api_key"]
-BASE_URL = "https://api.ataix.kz"
+API_KEY = ""
 
 def get_request(endpoint):
-    url = f"{BASE_URL}{endpoint}"
+    url = f"https://api.ataix.kz{endpoint}"
     headers = {
         "API-KEY": API_KEY,
         "Content-Type": "application/json"
     }
-    try:
-        response = requests.get(url, headers=headers, timeout=20)
-        if response.status_code == 200:
-            return response.json()
-        else:
-            return f"Ошибка: {response.status_code}, {response.text}"
-    except requests.exceptions.Timeout:
-        return "Превышено время ожидания ответа от сервера"
-    except requests.exceptions.RequestException as e:
-        return f"Ошибка запроса: {e}"
+    response = requests.get(url, headers=headers, timeout=20)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return f"Ошибка: {response.status_code}, {response.text}"
 
 def find_currencies(text, word):
     words = re.findall(r'\b\w+\b', text)
