@@ -5,7 +5,7 @@
         "quantity": "1",
         "symbol": "1INCH/USDT",
         "created": "2025-03-27T06:33:41.227Z",
-        "status": "new"
+        "status": "filled"
     },
     {
         "orderID": "1INCH-USDT-9717-1743057221622",
@@ -13,7 +13,7 @@
         "quantity": "1",
         "symbol": "1INCH/USDT",
         "created": "2025-03-27T06:33:41.622Z",
-        "status": "new"
+        "status": "filled"
     },
     {
         "orderID": "1INCH-USDT-9718-1743057221995",
@@ -21,6 +21,6 @@
         "quantity": "1",
         "symbol": "1INCH/USDT",
         "created": "2025-03-27T06:33:41.996Z",
-        "status": "new"
+        "status": "filled"
     }
 ]

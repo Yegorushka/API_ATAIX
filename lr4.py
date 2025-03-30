@@ -2,13 +2,27 @@ import json, re, requests
 
 API_KEY = ""
 
-def get_request(endpoint):
+def get_request(endpoint, get_post_delete, symbol = "", price = ""):                      # Создания URL-запроса на ataix.kz
     url = f"https://api.ataix.kz{endpoint}"
     headers = {
-        "API-KEY": API_KEY,
-        "Content-Type": "application/json"
+        "accept": "application/json",
+        "X-API-Key": API_KEY
     }
-    response = requests.get(url, headers=headers, timeout=20)
+    data = {
+        "symbol": symbol,
+        "side": "buy",
+        "type": "limit",
+        "quantity": 1,
+        "price": price
+    }
+
+    if get_post_delete == "get":
+        response = requests.get(url, headers=headers, timeout=20)
+    elif get_post_delete == "post":
+        response = requests.post(url, headers=headers, json=data, timeout=20)
+    elif get_post_delete == "delete":
+        response = requests.delete(url, headers=headers, timeout=20)
+    
     if response.status_code == 200:
         return response.json()
     else:
@@ -45,17 +59,18 @@ def find_prices(text, word):
         price.append(match)
     return price
 
-print("Список всех валют:")
-data_currency = get_request("/api/currencies")
-find_currencies(json.dumps(data_currency), "currency")
+if __name__ == "__main__":
+    print("Список всех валют:")
+    data_currency = get_request("/api/currencies", "get")
+    find_currencies(json.dumps(data_currency), "currency")
 
-print("\nСписок всех торговых пар:")
-data_symbol = get_request("/api/symbols")
-symbols = find_symbols(json.dumps(data_symbol), "symbol")
+    print("\nСписок всех торговых пар:")
+    data_symbol = get_request("/api/symbols", "get")
+    symbols = find_symbols(json.dumps(data_symbol), "symbol")
 
-print("\nСписок цены всех монет и токенов:")
-data_prices = get_request("/api/prices")
-price = find_prices(json.dumps(data_prices), "lastTrade")
+    print("\nСписок цены всех монет и токенов:")
+    data_prices = get_request("/api/prices", "get")
+    price = find_prices(json.dumps(data_prices), "lastTrade")
 
-for i in range(len(symbols)):
-    print(f"{symbols[i]}: {price[i]}")
+    for i in range(len(symbols)):
+        print(f"{symbols[i]}: {price[i]}")
