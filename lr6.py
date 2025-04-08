@@ -1,4 +1,4 @@
-import json
+import json, sys
 from lr4 import get_request
 from lr5 import save_json
 
@@ -20,15 +20,19 @@ for i in range(len(order_ids)):
     print(f"OrderID: {order_ids[i]} \t Status: {status_ids[i]}")
 
 print("-" * 50)
-print("Если ордер выполнен, его статус изменится на 'filled', иначе статус изменится на 'cancelled' в файле orders_data.json")
+print("Если ордер выполнен, его статус изменится на 'filled' и завершится, \
+иначе статус изменится на 'cancelled' в файле orders_data.json")
 print("-" * 50)
 
+is_filled = False
 for i in range(len(order_ids)):
     response = get_request(f"/api/orders/{order_ids[i]}", "get")
     if "filled" in str(response):
         for order in data:
             if order["orderID"] == order_ids[i]:
                 order["status"] = "filled"
+        is_filled = True
+
     else:
         print(f"OrderID: {order_ids[i]} \t Price: {price_ids[i]}$ \t Status: {status_ids[i]}")
         not_filled_orders.append(order_ids[i])
@@ -39,6 +43,10 @@ for i in range(len(order_ids)):
     
     with open("orders_data.json", "w", encoding="utf-8") as file:
         json.dump(data, file, indent=4, ensure_ascii=False)
+
+if is_filled:
+    print("Все ордера выполнены, скрипт завершен!")
+    sys.exit()
 
 print("=" * 50)
 print("ОТМЕНА НЕВЫПОЛНЕННЫХ ОРДЕРОВ")
