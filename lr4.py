@@ -1,8 +1,8 @@
 import json, re, requests
 
-API_KEY = ""
+API_KEY = "___API___"
 
-def get_request(endpoint, get_post_delete, symbol = "", price = ""):                      # Создания URL-запроса на ataix.kz
+def get_request(endpoint, get_post_delete, symbol = "", side = "", price = ""):
     url = f"https://api.ataix.kz{endpoint}"
     headers = {
         "accept": "application/json",
@@ -10,7 +10,7 @@ def get_request(endpoint, get_post_delete, symbol = "", price = ""):            
     }
     data = {
         "symbol": symbol,
-        "side": "buy",
+        "side": side,
         "type": "limit",
         "quantity": 1,
         "price": price
@@ -58,6 +58,7 @@ def find_prices(text, word):
     for match in matches:
         price.append(match)
     return price
+
 
 if __name__ == "__main__":
     print("Список всех валют:")

@@ -1,7 +1,16 @@
 import json, re, sys, os
 from lr4 import get_request
 
-def find_name_currencies(text, word):   # Поиск уникальных валют на бирже
+def confirm_action():
+    print("[?] Если Вы согласны, напишите 'yes', если нет — 'exit'")
+    while True:
+        x = input("--> ").lower()
+        if x == "yes":
+            return True
+        elif x == "exit":
+            sys.exit()
+
+def find_name_currencies(text, word):
     words = re.findall(r'\b\w+\b', text)
     unique_currencies = set()
     for i in range(len(words) - 1):
@@ -40,12 +49,14 @@ def save_json(orders_list):
             "price": order["result"]["price"],
             "quantity": order["result"]["quantity"],
             "symbol": order["result"]["symbol"],
+            "side": order["result"]["side"],
             "created": order["result"]["created"],
             "status": order["result"].get("status", "NEW")
         }
         orders.append(order_data)
     with open(filename, "w") as file:
         json.dump(orders, file, indent=4)
+
 
 if __name__ == "__main__":
     print("=" * 50)
@@ -88,19 +99,12 @@ if __name__ == "__main__":
     price_8pc = round(float(price_less_0_6) * 0.92, 4)
     print("\nСледующим шагом будет создано три ордера на покупку токена.")
     print(f"Цена покупки: -2% ({price_2pc}$), -5% ({price_5pc}$), -8% ({price_8pc}$)")
-    print("\n[?] Если Вы согласны, напишите 'yes', если нет — 'exit'")
     
-    while True:
-        x = input("--> ")
-        if x == "yes":
-            break
-        elif x == "exit":
-            sys.exit()
-    
-    orders_list = []
-    for price_level in [price_2pc, price_5pc, price_8pc]:
-        order = get_request("/api/orders", "post", current_cur + "/USDT", price_level)
-        orders_list.append(order)
+    if confirm_action():
+        orders_list = []
+        for price_level in [price_2pc, price_5pc, price_8pc]:
+            order = get_request("/api/orders", "post", symbol = current_cur + "/USDT",side = "buy",  price = price_level)
+            orders_list.append(order)
     
     save_json(orders_list)
     print("\n[+] Ордера успешно созданы.")
