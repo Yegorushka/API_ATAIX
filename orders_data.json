@@ -25,5 +25,32 @@
         "side": "buy",
         "created": "2025-03-27T06:33:41.996Z",
         "status": "filled"
+    },
+    {
+        "orderID": "1INCH-USDT-445647-1745169603562",
+        "price": "0.1697",
+        "quantity": "1",
+        "symbol": "1INCH/USDT",
+        "side": "sell",
+        "created": "2025-04-20T17:20:03.562Z",
+        "status": "filled"
+    },
+    {
+        "orderID": "1INCH-USDT-445649-1745169604106",
+        "price": "0.1697",
+        "quantity": "1",
+        "symbol": "1INCH/USDT",
+        "side": "sell",
+        "created": "2025-04-20T17:20:04.107Z",
+        "status": "filled"
+    },
+    {
+        "orderID": "1INCH-USDT-445653-1745169604653",
+        "price": "0.1697",
+        "quantity": "1",
+        "symbol": "1INCH/USDT",
+        "side": "sell",
+        "created": "2025-04-20T17:20:04.653Z",
+        "status": "filled"
     }
 ]

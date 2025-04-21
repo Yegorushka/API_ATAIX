@@ -1,8 +1,11 @@
-import json, re, requests
+import json
+import re
+import requests
 
 API_KEY = "___API___"
 
-def get_request(endpoint, get_post_delete, symbol = "", side = "", price = ""):
+
+def get_request(endpoint, get_post_delete, symbol="", side="", price=""):
     url = f"https://api.ataix.kz{endpoint}"
     headers = {
         "accept": "application/json",
@@ -22,11 +25,12 @@ def get_request(endpoint, get_post_delete, symbol = "", side = "", price = ""):
         response = requests.post(url, headers=headers, json=data, timeout=20)
     elif get_post_delete == "delete":
         response = requests.delete(url, headers=headers, timeout=20)
-    
+
     if response.status_code == 200:
         return response.json()
     else:
         return f"Ошибка: {response.status_code}, {response.text}"
+
 
 def find_currencies(text, word):
     words = re.findall(r'\b\w+\b', text)
@@ -37,6 +41,7 @@ def find_currencies(text, word):
             print(f"{next_word}")
             count += 1
     print(f"Количество валют: {count}")
+
 
 def find_symbols(text, word):
     words = re.findall(r'\b\w+(?:/\w+)?\b', text)
@@ -50,6 +55,7 @@ def find_symbols(text, word):
             pair_sym.append(next_word)
     print(f"Количество торговых пар: {count}")
     return pair_sym
+
 
 def find_prices(text, word):
     pattern = rf'{word}[\s\W]*([-+]?\d*\.\d+|\d+)'

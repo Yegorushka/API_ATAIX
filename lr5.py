@@ -1,5 +1,9 @@
-import json, re, sys, os
+import json
+import re
+import sys
+import os
 from lr4 import get_request
+
 
 def confirm_action():
     print("[?] Если Вы согласны, напишите 'yes', если нет — 'exit'")
@@ -10,6 +14,7 @@ def confirm_action():
         elif x == "exit":
             sys.exit()
 
+
 def find_name_currencies(text, word):
     words = re.findall(r'\b\w+\b', text)
     unique_currencies = set()
@@ -18,6 +23,7 @@ def find_name_currencies(text, word):
             next_word = re.sub(r'[^a-zA-Zа-яА-Я]', '', words[i + 1])
             unique_currencies.add(next_word)
     return unique_currencies
+
 
 def find_symbols(text, word):
     words = re.findall(r'\b\w+(?:/\w+)?\b', text)
@@ -28,10 +34,12 @@ def find_symbols(text, word):
             pair_sym.append(next_word)
     return pair_sym
 
+
 def find_prices(text, word):
     pattern = rf'{word}[\s\W]*([-+]?\d*\.\d+|\d+)'
     matches = re.findall(pattern, text)
     return matches
+
 
 def save_json(orders_list):
     filename = "orders_data.json"
@@ -69,7 +77,7 @@ if __name__ == "__main__":
         if balance:
             print(f"{currency:<10} | {balance.group(1):>10} USDT")
     print("=" * 50)
-    
+
     currencies_less_0_6 = []
     price_less_0_6_list = {}
     symbols = find_symbols(json.dumps(get_request("/api/symbols", "get")), "symbol")
@@ -82,7 +90,7 @@ if __name__ == "__main__":
             currencies_less_0_6.append(symbols[i])
             price_less_0_6_list[symbols[i]] = price[i]
     print("=" * 50)
-    
+
     while True:
         current_cur = input("Выберите торговую пару (TRX, IMX, 1INCH) или exit --> ").upper()
         if current_cur + "/USDT" in currencies_less_0_6:
@@ -92,20 +100,20 @@ if __name__ == "__main__":
             sys.exit()
         else:
             print("[!] Такой торговой пары нет в списке. Попробуйте еще раз.")
-    
+
     print(f"\nВы выбрали: {current_cur} по цене {price_less_0_6} USDT")
     price_2pc = round(float(price_less_0_6) * 0.98, 4)
     price_5pc = round(float(price_less_0_6) * 0.95, 4)
     price_8pc = round(float(price_less_0_6) * 0.92, 4)
     print("\nСледующим шагом будет создано три ордера на покупку токена.")
     print(f"Цена покупки: -2% ({price_2pc}$), -5% ({price_5pc}$), -8% ({price_8pc}$)")
-    
+
     if confirm_action():
         orders_list = []
         for price_level in [price_2pc, price_5pc, price_8pc]:
-            order = get_request("/api/orders", "post", symbol = current_cur + "/USDT",side = "buy",  price = price_level)
+            order = get_request("/api/orders", "post", symbol=current_cur+"/USDT", side="buy",  price=price_level)
             orders_list.append(order)
-    
+
     save_json(orders_list)
     print("\n[+] Ордера успешно созданы.")
     print("[i] Для проверки результата посетите сайт ATAIX (вкладка 'Мои ордера').")

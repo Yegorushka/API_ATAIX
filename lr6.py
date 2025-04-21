@@ -1,13 +1,30 @@
-import json, sys
+import json
+import sys
 from lr4 import get_request
 from lr5 import save_json
 
-def print_order_status(order_ids, status_ids, side_ids):
+
+def print_order_status(**kwargs):
+    """
+    Универсальная функция для вывода информации об ордерах.
+    Принимает любые списки значений по ключам (orderID, price, status и т.д.).
+    """
+    count = len(next(iter(kwargs.values()), []))  # берем длину первого списка
     print("=" * 50)
-    print("СТАТУС ВСЕХ ОРДЕРОВ")
+    print("СТАТУС ОРДЕРОВ")
     print("=" * 50)
-    for i in range(len(order_ids)):
-        print(f"OrderID: {order_ids[i]}\t Status: {status_ids[i]}\t Side: {side_ids[i]}")
+    for i in range(count):
+        print(f"[{i + 1}]")
+        for key, values in kwargs.items():
+            if i < len(values):  # проверяем на всякий случай
+                formatted_key = key.replace("_", " ").title().ljust(15)
+                print(f"     {formatted_key}: {values[i]}")
+        print("-" * 50)
+
+# print_order_status(orderID_list, userId_list, side_list, type_list,
+# subType_list, price_list, averagePrice_list, quantity_list,
+# cumQuantity_list, cumQuoteQuantity_list, cumCommission_list, symbol_list,
+# status_list, created_list, updated_list)
 
 
 if __name__ == "__main__":
@@ -23,11 +40,10 @@ if __name__ == "__main__":
     not_filled_orders = []
     nfo_price = []
 
-    print_order_status(order_ids, status_ids, side_ids)
+    print_order_status(orderID=order_ids, status=status_ids, side=side_ids)
 
-    print("-" * 50)
-    print("Если ордер выполнен, его статус изменится на 'filled' и завершится, \
-    иначе статус изменится на 'cancelled' в файле orders_data.json")
+    print("Если ордер выполнен, его статус изменится на 'filled' и завершится,\
+     иначе статус изменится на 'cancelled' в файле orders_data.json")
     print("-" * 50)
 
     is_filled = False
@@ -46,7 +62,7 @@ if __name__ == "__main__":
             for order in data:
                 if order["orderID"] == order_ids[i]:
                     order["status"] = "cancelled"
-        
+
         with open("orders_data.json", "w", encoding="utf-8") as file:
             json.dump(data, file, indent=4, ensure_ascii=False)
 
@@ -67,7 +83,7 @@ if __name__ == "__main__":
     orders_list = []
     for j in range(len(not_filled_orders)):
         new_price = round(float(nfo_price[j]) * 1.01, 4)
-        orders_list.append(get_request("/api/orders", "post", symbol = symbol_ids[j], side = "buy",  price = new_price))
+        orders_list.append(get_request("/api/orders", "post", symbol=symbol_ids[j], side="buy",  price=new_price))
         print(f"[+] Создан новый ордер: {symbol_ids[j]} по цене {new_price}$")
 
     save_json(orders_list)
